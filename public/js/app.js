@@ -135,6 +135,7 @@ const Components = {
     if (!data.success) return `<h2>Product not found</h2>`;
     const p = data.product;
     state.currentProduct = p;
+    cart.selectedSize = null; // Reset size for new product
     productGallery.currentIndex = 0; // Reset index for new product view
     
     const list = p.images.gallery || [];
@@ -312,6 +313,29 @@ const Components = {
         </div>
       </section>
     `;
+  },
+
+  Account: () => {
+    console.log('💎 Rendering Account. User State:', state.user);
+    if (!state.user) {
+      console.warn('⚠️ No user in state. Redirecting to login.');
+      router.navigate('/login');
+      return '';
+    }
+    return `
+      <section class="container account-hero">
+        <h1 style="font-size: 8vw; font-weight: 900; letter-spacing: -4px;">PROFILE</h1>
+        <div class="account-card">
+          <p class="account-email">${state.user.email}</p>
+          <button class="btn-premium" onclick="logout()" style="background: #ff3b3b; width: 100%;">LOGOUT</button>
+        </div>
+        
+        <div class="container" style="max-width: 800px; text-align: left;">
+          <h3 class="order-history-title">RECENT ORDERS</h3>
+          <p style="color: var(--color-text-dim); text-align: center; margin: 4rem 0;">No recent orders found.</p>
+        </div>
+      </section>
+    `;
   }
 };
 
@@ -467,7 +491,14 @@ const router = {
       app.innerHTML = Components.Checkout();
     }
     else if (path === '/checkout-success') app.innerHTML = Components.CheckoutSuccess();
-    else if (path === '/cart') { cart.toggle(true); router.navigate('/shop'); } // Redirect to shop but open cart
+    else if (path === '/account') app.innerHTML = Components.Account();
+    else if (path === '/cart') { 
+      // Handle cart opening without infinite loop
+      app.innerHTML = Components.Hero(); // Default background
+      router.navigate('/'); // Clean the URL
+      setTimeout(() => cart.toggle(true), 10);
+      return;
+    }
     else app.innerHTML = `<div class="container section"><h2>404 Systems Error</h2></div>`;
     
     updateNavUI();
@@ -561,3 +592,5 @@ document.addEventListener('DOMContentLoaded', () => {
 window.router = router;
 window.cart = cart;
 window.productGallery = productGallery;
+window.logout = logout;
+window.state = state; // Export state for easier debugging

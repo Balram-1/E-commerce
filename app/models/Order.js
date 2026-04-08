@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
+  orderNumber: { type: String, unique: true, index: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false, index: true },
   email: { type: String, required: true },
   items: [{
@@ -25,5 +26,15 @@ const orderSchema = new mongoose.Schema({
   status: { type: String, default: 'processing', enum: ['processing', 'shipped', 'delivered', 'cancelled'] },
   total: { type: Number, required: true }
 }, { timestamps: true });
+
+// 💎 AUTO-GENERATE ORDER NUMBER
+orderSchema.pre('save', function(next) {
+  if (!this.orderNumber || this.orderNumber === null) {
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    this.orderNumber = `AE-${timestamp}${random}`;
+  }
+  next();
+});
 
 module.exports = mongoose.model('Order', orderSchema);

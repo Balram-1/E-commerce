@@ -1,6 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const Product = require('./app/models/Product');
+const Order = require('./app/models/Order');
 
 const products = [
   {
@@ -147,7 +148,8 @@ const seed = async () => {
     }
 
     await Product.deleteMany();
-    console.log('🧹 Purged Legacy Data');
+    await Order.deleteMany();
+    console.log('🧹 Purged Legacy Data (Products & Orders)');
 
     // Insert new products one by one to trigger pre-save hooks (slugs)
     for (const prod of products) {
