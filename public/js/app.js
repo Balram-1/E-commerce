@@ -252,25 +252,25 @@ const Components = {
                 <div class="form-row">
                   <div class="form-group">
                     <label class="form-label">FIRST NAME</label>
-                    <input type="text" class="form-input" placeholder="JANE" required>
+                    <input type="text" name="firstName" class="form-input" placeholder="JANE" required>
                   </div>
                   <div class="form-group">
                     <label class="form-label">LAST NAME</label>
-                    <input type="text" class="form-input" placeholder="DOE" required>
+                    <input type="text" name="lastName" class="form-input" placeholder="DOE" required>
                   </div>
                 </div>
                 <div class="form-group mt-3">
                   <label class="form-label">STREET ADDRESS</label>
-                  <input type="text" class="form-input" placeholder="123 URBAN BOULEVARD" required>
+                  <input type="text" name="address" class="form-input" placeholder="123 URBAN BOULEVARD" required>
                 </div>
                 <div class="form-row mt-3">
                   <div class="form-group">
                     <label class="form-label">CITY</label>
-                    <input type="text" class="form-input" placeholder="NEO-TOKYO" required>
+                    <input type="text" name="city" class="form-input" placeholder="NEO-TOKYO" required>
                   </div>
                   <div class="form-group">
                     <label class="form-label">ZIP CODE</label>
-                    <input type="text" class="form-input" placeholder="10101" required>
+                    <input type="text" name="zip" class="form-input" placeholder="10101" required>
                   </div>
                 </div>
               </div>
@@ -376,18 +376,57 @@ const cart = {
     router.navigate('/checkout');
   },
 
-  placeOrder: () => {
+  placeOrder: async () => {
     const email = document.getElementById('checkout-email').value;
     if (!email) return alert('Email is required for the receipt.');
     
-    // Simulate order processing
-    console.log('Processing order for:', email, state.cart);
+    // Collect form data
+    const form = document.getElementById('checkout-form');
+    const formData = new FormData(form);
     
-    state.cart = [];
-    saveState();
-    updateNavUI();
-    router.navigate('/checkout-success');
-    alertSystem.show('ORDER PLACED SUCCESSFULLY');
+    const shipping = {
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      address: formData.get('address'),
+      city: formData.get('city'),
+      zip: formData.get('zip')
+    };
+
+    // Format items for backend
+    const items = state.cart.map(item => ({
+      product: item.id,
+      name: item.name,
+      image: item.image,
+      price: item.price,
+      size: item.size
+    }));
+
+    const total = state.cart.reduce((sum, item) => sum + item.price, 0) * 1.1; // Total + Tax
+
+    const payload = {
+      email,
+      items,
+      shipping,
+      total,
+      payment: { method: 'card', status: 'pending' }
+    };
+
+    alertSystem.show('PROCESSING ORDER...');
+
+    const { res, data } = await api('/orders', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      state.cart = [];
+      saveState();
+      updateNavUI();
+      router.navigate('/checkout-success');
+      alertSystem.show('ORDER PLACED SUCCESSFULLY');
+    } else {
+      alert(data.message || 'Failed to place order');
+    }
   }
 };
 
