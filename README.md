@@ -1,62 +1,91 @@
-# AETHER - Premium Urban Essence 💎
+# AETHER | Pure Urban Essence 💎
 
-A state-of-the-art, ultra-minimalist e-commerce storefront designed for the modern individual. Built with architectural integrity, visual excellence, and production-ready features.
+![AETHER Banner](https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&q=80&w=1200&h=400)
 
----
-
-## 🚀 **Key Features**
-- **Architecture**: Modular MVC Backend (Node.js/Express) with a Vanilla ES6+ SPA Frontend.
-- **Email Receipts**: Automated HTML order confirmations via **Brevo SMTP**.
-- **Guest Checkout**: Seamless purchasing flow for non-registered users.
-- **Account Management**: Secure Profile dashboard and JWT-based session handling.
-- **Dynamic Catalog**: Intelligent product discovery with size selection and inventory logic.
+AETHER is a state-of-the-art, ultra-minimalist e-commerce platform designed for the modern individual. Built with architectural integrity and visual excellence, it delivers a seamless Single-Page Application (SPA) experience for premium urban streetwear.
 
 ---
 
-## 🎨 **Design Philosophy**
-AETHER follows the core principles of premium minimalist design:
-- **Typography-First**: Bold, cinematic headlines convey brand identity without visual clutter.
-- **Glassmorphic UI**: Translucent, floating navigation creates a sense of depth.
-- **Aesthetic Precision**: A monochromatic palette (Pure White & Onyx Black) with sharp Electric Blue accents.
+## 🚀 Key Features
+
+- **Fluid SPA Architecture**: Lightning-fast transitions with zero-reload navigation.
+- **Brevo Email Integration**: Automated, professional HTML order confirmations and receipts.
+- **Robust Guest Checkout**: Minimalist purchase flow capturing essential data without friction.
+- **Secure Account Portal**: JWT-powered authentication with a clean, functional dashboard.
+- **Smart Catalog**: Real-time inventory tracking, intelligent size selection, and dynamic product discovery.
+- **Production-Ready**: Unique order ID generation (`AE-XXXXXX`) and hardened security.
 
 ---
 
-## 🛠️ **Getting Started**
+## 🎨 Design Philosophy
 
-### **1. Prerequisites**
-Ensure you have **Node.js** and **MongoDB** installed locally.
+AETHER is defined by **Aesthetic Precision**:
+- **Typography-First**: Cinematic headlines and clean sans-serif layouts.
+- **Glassmorphism**: Translucent, floating UI elements for a modern, high-depth feel.
+- **Monochromatic Palette**: A sharp combination of Pure White and Onyx Black with Electric Blue highlights.
 
-### **2. Setup**
+---
+
+## 🛠️ Technical Stack
+
+- **Frontend**: Vanilla ES6+ JavaScript, CSS3 (Modular System).
+- **Backend**: Node.js, Express (Modular MVC).
+- **Database**: MongoDB with Mongoose ODM.
+- **Authentication**: JWT & LocalStorage state management.
+- **Mailing**: Brevo (formerly Sendinblue) SMTP Relay.
+
+---
+
+## 🏁 Getting Started
+
+### 1. Installation
+Clone the repository and install dependencies:
 ```bash
 npm install
 ```
 
-### **3. Environment Config**
-Copy `.env.example` to `.env` and fill in your MongoDB and Brevo SMTP credentials.
+### 2. Environment Configuration
+Create a `.env` file based on the `.env.example` provided:
 ```bash
-cp .env.example .env
+# Core
+MONGODB_URI=your_mongodb_uri
+PORT=5000
+
+# Email (Brevo)
+EMAIL_HOST=smtp-relay.brevo.com
+EMAIL_USER=your_smtp_login
+EMAIL_PASS=your_smtp_key
+EMAIL_FROM="AETHER Store" <your-verified-sender@domain.com>
 ```
 
-### **4. Seeding the Catalog**
-To populate the store and clear old data:
+### 3. Synchronize Catalog
+Populate the store with the initial premium collection:
 ```bash
 node seed.js
 ```
 
-### **5. Launching the Store**
+### 4. Launch
+Start the AETHER engine:
 ```bash
 npm start
 ```
-Access the storefront at: **[http://localhost:5000](http://localhost:5000)**
+
+Your store will be live at: **[http://localhost:5000](http://localhost:5000)**
 
 ---
 
-## 📦 **Directory Structure**
-- **`app/`**: Models, Controllers, Routes, and Middleware.
-- **`public/`**: The SPA frontend (Assets, CSS, Core Logic).
-- **`seed.js`**: Universal data synchronization script.
+## 📦 Directory Structure
+
+- `app/` - Core MVC logic (Models, Controllers, Routes).
+- `public/` - The SPA engine and premium visual assets.
+- `seed.js` - Automated catalog synchronization.
+- `server.js` - Modular server entry point.
 
 ---
 
-## 👨‍💻 **Developed with Antigravity**
-Built to deliver a professional-grade urban streetwear experience with 100% focus on stability and aesthetics.
+## ⚖️ License
+AETHER is a private performance-driven project.
+
+---
+
+**Built with architectural precision by Antigravity.**
