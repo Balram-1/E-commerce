@@ -316,9 +316,7 @@ const Components = {
   },
 
   Account: () => {
-    console.log('💎 Rendering Account. User State:', state.user);
     if (!state.user) {
-      console.warn('⚠️ No user in state. Redirecting to login.');
       router.navigate('/login');
       return '';
     }

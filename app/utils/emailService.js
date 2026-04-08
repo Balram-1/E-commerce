@@ -1,7 +1,9 @@
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE || 'hotmail',
+  host: process.env.EMAIL_HOST,
+  port: parseInt(process.env.EMAIL_PORT) || 587,
+  secure: false, // TLS
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
@@ -9,8 +11,8 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.sendReceipt = async (order) => {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.warn('⚠️  EMAIL_USER/PASS not configured. Skipping email send.');
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !process.env.EMAIL_HOST) {
+    console.warn('⚠️  EMAIL config missing (HOST/USER/PASS). Skipping email send.');
     return;
   }
 
@@ -68,9 +70,9 @@ exports.sendReceipt = async (order) => {
 
   try {
     await transporter.sendMail({
-      from: `"AETHER" <${process.env.EMAIL_USER}>`,
+      from: process.env.EMAIL_FROM || `"AETHER" <${process.env.EMAIL_USER}>`,
       to: order.email,
-      subject: `Order Confirmation - AETHER [${order._id}]`,
+      subject: `Order Confirmation - AETHER [${order.orderNumber}]`,
       html: htmlContent
     });
     console.log(`✅ Receipt sent to ${order.email}`);

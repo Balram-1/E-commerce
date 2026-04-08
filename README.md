@@ -1,23 +1,23 @@
 # AETHER - Premium Urban Essence 💎
 
-A state-of-the-art, ultra-minimalist e-commerce storefront designed for the modern individual. Built with architectural integrity and visual excellence in mind.
+A state-of-the-art, ultra-minimalist e-commerce storefront designed for the modern individual. Built with architectural integrity, visual excellence, and production-ready features.
+
+---
+
+## 🚀 **Key Features**
+- **Architecture**: Modular MVC Backend (Node.js/Express) with a Vanilla ES6+ SPA Frontend.
+- **Email Receipts**: Automated HTML order confirmations via **Brevo SMTP**.
+- **Guest Checkout**: Seamless purchasing flow for non-registered users.
+- **Account Management**: Secure Profile dashboard and JWT-based session handling.
+- **Dynamic Catalog**: Intelligent product discovery with size selection and inventory logic.
 
 ---
 
 ## 🎨 **Design Philosophy**
 AETHER follows the core principles of premium minimalist design:
 - **Typography-First**: Bold, cinematic headlines convey brand identity without visual clutter.
-- **Glassmorphic UI**: Translucent, floating navigation creates a sense of depth and modernity.
-- **Pure Contrast**: A monochromatic palette of Pure White and Onyx Black with a sharp Electric Blue accent.
-
----
-
-## 🚀 **Technical Stack**
-- **Backend**: Node.js & Express (Modular MVC Architecture).
-- **Database**: MongoDB (Mongoose).
-- **Frontend**: Vanilla ES6+ SPA (Zero-Reload transitions).
-- **State Management**: LocalStorage-backed state sync for Cart and Auth.
-- **Security**: JWT-based Authentication.
+- **Glassmorphic UI**: Translucent, floating navigation creates a sense of depth.
+- **Aesthetic Precision**: A monochromatic palette (Pure White & Onyx Black) with sharp Electric Blue accents.
 
 ---
 
@@ -31,27 +31,32 @@ Ensure you have **Node.js** and **MongoDB** installed locally.
 npm install
 ```
 
-### **3. Seeding the Catalog**
-To populate the store with the AETHER premium collection:
+### **3. Environment Config**
+Copy `.env.example` to `.env` and fill in your MongoDB and Brevo SMTP credentials.
 ```bash
-node seed-aether.js
+cp .env.example .env
 ```
 
-### **4. Launching the Store**
+### **4. Seeding the Catalog**
+To populate the store and clear old data:
+```bash
+node seed.js
+```
+
+### **5. Launching the Store**
 ```bash
 npm start
 ```
-
 Access the storefront at: **[http://localhost:5000](http://localhost:5000)**
 
 ---
 
 ## 📦 **Directory Structure**
-- **`app/`**: Refined MVC logic (Models, Controllers, Routes, Middleware).
-- **`public/`**: The modern SPA frontend (HTML, CSS, JS).
-- **`server.js`**: Clean, modular entry point.
+- **`app/`**: Models, Controllers, Routes, and Middleware.
+- **`public/`**: The SPA frontend (Assets, CSS, Core Logic).
+- **`seed.js`**: Universal data synchronization script.
 
 ---
 
 ## 👨‍💻 **Developed with Antigravity**
-Built from scratch to deliver a professional-grade urban streetwear experience.
+Built to deliver a professional-grade urban streetwear experience with 100% focus on stability and aesthetics.
