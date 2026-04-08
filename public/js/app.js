@@ -211,7 +211,108 @@ const Components = {
       <p class="mt-4" style="color: var(--color-text-dim); max-width: 500px; margin: 2rem auto;">Your order was successfully processed and is being staged for dispatch in our urban hub.</p>
       <button class="btn-premium mt-4" onclick="router.navigate('/')">RETURN HOME</button>
     </section>
-  `
+  `,
+
+  Checkout: () => {
+    const total = state.cart.reduce((sum, item) => sum + item.price, 0);
+    const tax = total * 0.1; // 10% tax example
+    const finalTotal = total + tax;
+    
+    const itemsHtml = state.cart.map(item => `
+      <div class="order-item-mini">
+        <img src="${item.image}" alt="${item.name}">
+        <div class="order-item-mini-info">
+          <h4>${item.name}</h4>
+          <p>SIZE: ${item.size} — $${item.price.toFixed(2)}</p>
+        </div>
+      </div>
+    `).join('');
+
+    const userEmail = state.user ? state.user.email : '';
+    const isGuest = !state.user;
+
+    return `
+      <section class="container section">
+        <div class="checkout-grid">
+          <div class="checkout-left">
+            <h1 class="checkout-title">CHECKOUT</h1>
+            
+            <form id="checkout-form" class="checkout-form" onsubmit="event.preventDefault(); cart.placeOrder();">
+              <div class="checkout-section">
+                <h3 class="checkout-section-title">01. CONTACT INFORMATION</h3>
+                <div class="form-group">
+                  <label class="form-label">EMAIL ADDRESS ${isGuest ? '<span style="color:var(--color-accent)">*</span>' : ''}</label>
+                  <input type="email" id="checkout-email" class="form-input" placeholder="EMAIL@EXAMPLE.COM" value="${userEmail}" required ${state.user ? 'readonly style="opacity:0.7"' : ''}>
+                  ${isGuest ? '<p style="font-size:0.65rem; color:var(--color-accent); margin-top:0.5rem;">WE NEED THIS TO SEND YOUR DIGITAL RECEIPT.</p>' : ''}
+                </div>
+              </div>
+
+              <div class="checkout-section mt-5">
+                <h3 class="checkout-section-title">02. SHIPPING ADDRESS</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">FIRST NAME</label>
+                    <input type="text" class="form-input" placeholder="JANE" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">LAST NAME</label>
+                    <input type="text" class="form-input" placeholder="DOE" required>
+                  </div>
+                </div>
+                <div class="form-group mt-3">
+                  <label class="form-label">STREET ADDRESS</label>
+                  <input type="text" class="form-input" placeholder="123 URBAN BOULEVARD" required>
+                </div>
+                <div class="form-row mt-3">
+                  <div class="form-group">
+                    <label class="form-label">CITY</label>
+                    <input type="text" class="form-input" placeholder="NEO-TOKYO" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">ZIP CODE</label>
+                    <input type="text" class="form-input" placeholder="10101" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="checkout-section mt-5">
+                <h3 class="checkout-section-title">03. PAYMENT</h3>
+                <p style="font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: 1rem;">Payment is currently simulated for this premium demonstration.</p>
+                <button type="submit" class="btn-premium w-100">PLACE ORDER — $${finalTotal.toFixed(2)}</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="checkout-right">
+            <div class="checkout-summary">
+              <h3 class="checkout-section-title">ORDER SUMMARY</h3>
+              <div class="checkout-order-items">
+                ${itemsHtml}
+              </div>
+              <div class="summary-details">
+                <div class="summary-item">
+                  <span>SUBTOTAL</span>
+                  <span>$${total.toFixed(2)}</span>
+                </div>
+                <div class="summary-item">
+                  <span>ESTIMATED TAX (10%)</span>
+                  <span>$${tax.toFixed(2)}</span>
+                </div>
+                <div class="summary-item">
+                  <span>SHIPPING</span>
+                  <span>COMPLIMENTARY</span>
+                </div>
+                <div class="summary-total">
+                  <span>TOTAL</span>
+                  <span>$${finalTotal.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
 };
 
 // ═══════════════════════════════════════════════════════════
@@ -272,10 +373,21 @@ const cart = {
 
   checkout: () => {
     if (state.cart.length === 0) return alert('Your cart is empty');
+    router.navigate('/checkout');
+  },
+
+  placeOrder: () => {
+    const email = document.getElementById('checkout-email').value;
+    if (!email) return alert('Email is required for the receipt.');
+    
+    // Simulate order processing
+    console.log('Processing order for:', email, state.cart);
+    
     state.cart = [];
     saveState();
     updateNavUI();
     router.navigate('/checkout-success');
+    alertSystem.show('ORDER PLACED SUCCESSFULLY');
   }
 };
 
@@ -308,6 +420,13 @@ const router = {
     }
     else if (path === '/login') app.innerHTML = Components.Auth('login');
     else if (path === '/signup') app.innerHTML = Components.Auth('register');
+    else if (path === '/checkout') {
+      if (state.cart.length === 0) {
+        router.navigate('/shop');
+        return;
+      }
+      app.innerHTML = Components.Checkout();
+    }
     else if (path === '/checkout-success') app.innerHTML = Components.CheckoutSuccess();
     else if (path === '/cart') { cart.toggle(true); router.navigate('/shop'); } // Redirect to shop but open cart
     else app.innerHTML = `<div class="container section"><h2>404 Systems Error</h2></div>`;

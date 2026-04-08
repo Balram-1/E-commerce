@@ -428,4 +428,130 @@ body {
   .product-detail-grid { grid-template-columns: 1fr; gap: 3rem; }
   .detail-img-main { height: 500px; }
   .detail-name { font-size: 2.5rem; }
+  .checkout-grid { grid-template-columns: 1fr !important; gap: 4rem; }
+}
+
+/* 💎 CHECKOUT PAGE */
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 8rem;
+  padding: 12rem 0 8rem 0;
+}
+
+.checkout-title {
+  font-size: 4rem;
+  font-weight: 900;
+  letter-spacing: -3px;
+  margin-bottom: 3rem;
+  text-transform: uppercase;
+}
+
+.checkout-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--color-text-dim);
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1rem;
+}
+
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.form-input {
+  padding: 1.25rem;
+  background: var(--color-secondary);
+  border: 1px solid transparent;
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  transition: var(--transition);
+  border-radius: 2px;
+}
+
+.form-input:focus {
+  outline: none;
+  background: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+.checkout-summary {
+  background: var(--color-secondary);
+  padding: 3rem;
+  border-radius: 4px;
+  height: fit-content;
+  position: sticky;
+  top: 8rem;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--color-primary);
+  font-weight: 900;
+  font-size: 1.5rem;
+}
+
+.checkout-order-items {
+  margin-bottom: 3rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.order-item-mini {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.order-item-mini img {
+  width: 50px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.order-item-mini-info h4 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.order-item-mini-info p {
+  font-size: 0.7rem;
+  color: var(--color-text-dim);
 }
