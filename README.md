@@ -1,21 +1,26 @@
 # AETHER | Pure Urban Essence 💎
-AETHER is a state-of-the-art, ultra-minimalist e-commerce platform designed for the modern individual. Built with architectural integrity and visual excellence, it delivers a seamless Single-Page Application (SPA) experience for premium urban streetwear.
-
-
----
-
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
-![alt text](image-3.png)
-![alt text](image-5.png)
-![alt text](image-4.png)
-![alt text](image-6.png)
-![alt text](image-7.png)
 
 AETHER is a state-of-the-art, ultra-minimalist e-commerce platform designed for the modern individual. Built with architectural integrity and visual excellence, it delivers a seamless Single-Page Application (SPA) experience for premium urban streetwear.
 
 ---
+
+## 📸 Visual Experience
+
+<div align="center">
+  <img src="./screenshots/image-2.png" alt="AETHER Dashboard" width="800">
+  <br>
+  <img src="./screenshots/image-1.png" alt="Product Catalog" width="400">
+  <img src="./screenshots/image-3.png" alt="Checkout Flow" width="400">
+  <br>
+  <img src="./screenshots/image.png" alt="Mobile Experience" width="250">
+  <img src="./screenshots/image-5.png" alt="User Account" width="250">
+  <img src="./screenshots/image-4.png" alt="Order Confirmation" width="250">
+  <img src="./screenshots/image-6.png" alt="Email Receipt" width="250">
+  <img src="./screenshots/image-7.png" alt="Admin Controls" width="250">
+</div>
+
+---
+
 
 ## 🚀 Key Features
 
@@ -99,4 +104,4 @@ AETHER is a private performance-driven project.
 
 ---
 
-**Built with architectural precision by Antigravity.**
+
