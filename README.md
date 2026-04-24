@@ -1,7 +1,14 @@
 # AETHER | Pure Urban Essence 💎
 
-![AETHER Banner](https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&q=80&w=1200&h=400)
+
 ![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
+![alt text](image-5.png)
+![alt text](image-4.png)
+![alt text](image-6.png)
+![alt text](image-7.png)
 
 AETHER is a state-of-the-art, ultra-minimalist e-commerce platform designed for the modern individual. Built with architectural integrity and visual excellence, it delivers a seamless Single-Page Application (SPA) experience for premium urban streetwear.
 
