@@ -77,6 +77,61 @@ const productGallery = {
 };
 
 // ═══════════════════════════════════════════════════════════
+// PRODUCT DISPLAY LOGIC
+// ═══════════════════════════════════════════════════════════
+
+function renderProduct(product) {
+  const productContainer = document.getElementById('product-container');
+  productContainer.innerHTML = `
+    <h1>${product.name}</h1>
+    <p>${product.description}</p>
+    <p>Price: $${product.price}</p>
+    <div id="sizes">
+      ${product.inventory.map(sizeItem => `
+        <button 
+          class="size-button" 
+          data-size="${sizeItem.size}" 
+          ${sizeItem.stock === 0 ? 'disabled' : ''}>
+          ${sizeItem.size} (${sizeItem.stock > 0 ? sizeItem.stock + ' in stock' : 'Out of stock'})
+        </button>
+      `).join('')}
+    </div>
+  `;
+
+  // Add event listeners to size buttons
+  document.querySelectorAll('.size-button').forEach(button => {
+    button.addEventListener('click', () => {
+      addToCart(product, button.dataset.size);
+    });
+  });
+}
+
+function addToCart(product, size) {
+  const existingItem = state.cart.find(item => item.productId === product._id && item.size === size);
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    state.cart.push({ productId: product._id, size, quantity: 1 });
+  }
+  saveState();
+  alert(`${product.name} (Size: ${size}) added to cart!`);
+}
+
+// Fetch and render products
+async function loadProducts() {
+  const { data } = await api('/products');
+  state.products = data.products;
+  saveState();
+
+  // Render the first product as an example
+  if (state.products.length > 0) {
+    renderProduct(state.products[0]);
+  }
+}
+
+loadProducts();
+
+// ═══════════════════════════════════════════════════════════
 // UI COMPONENTS
 // ═══════════════════════════════════════════════════════════
 
@@ -170,7 +225,21 @@ const Components = {
           <p class="detail-description">${p.description}</p>
           
           <div class="size-selector">
-            ${p.inventory.map(i => `<div class="size-chip" onclick="cart.selectSize('${i.size}')">${i.size}</div>`).join('')}
+            ${p.inventory.map(i => {
+              const outOfStock = i.stock <= 0;
+              const lowStock = i.stock > 0 && i.stock <= 5;
+              return `
+                <div class="size-container">
+                  <div class="size-chip ${outOfStock ? 'out-of-stock' : ''}" 
+                       onclick="${outOfStock ? 'void(0)' : `cart.selectSize('${i.size}')`}"
+                       style="${outOfStock ? 'pointer-events: none;' : ''}">
+                    ${i.size}
+                  </div>
+                  ${lowStock ? '<div class="low-stock-badge">LOW STOCK</div>' : ''}
+                  ${outOfStock ? '<div class="low-stock-badge" style="color:var(--color-text-dim)">GONE</div>' : ''}
+                </div>
+              `;
+            }).join('')}
           </div>
           
           <button class="btn-premium" onclick="cart.add()">ADD TO CART</button>
@@ -199,9 +268,11 @@ const Components = {
       <img src="${item.image}" class="cart-item-img">
       <div class="cart-item-info-row" style="flex:1;">
         <h4 style="font-size:0.9rem; margin-bottom:0.25rem;">${item.name}</h4>
-        <p style="font-size:0.75rem; color:var(--color-text-dim);">SIZE: ${item.size}</p>
-        <p style="font-size:0.85rem; margin-top:0.25rem;">$${item.price.toFixed(2)}</p>
-        <button onclick="cart.remove(${idx})" style="background:none; border:none; color:#ff3b3b; cursor:pointer; font-size:0.7rem; margin-top:0.5rem; padding:0; text-decoration:underline;">REMOVE</button>
+        <p style="font-size:0.75rem; color:var(--color-text-dim);">SIZE: ${item.size} — QTY: ${item.quantity}</p>
+        <p style="font-size:0.85rem; margin-top:0.25rem;">$${(item.price * item.quantity).toFixed(2)}</p>
+        <div style="display:flex; gap:1rem; align-items:center; margin-top:0.5rem;">
+           <button onclick="cart.remove(${idx})" style="background:none; border:none; color:#ff3b3b; cursor:pointer; font-size:0.7rem; padding:0; text-decoration:underline;">REMOVE</button>
+        </div>
       </div>
     </div>
   `,
@@ -215,7 +286,7 @@ const Components = {
   `,
 
   Checkout: () => {
-    const total = state.cart.reduce((sum, item) => sum + item.price, 0);
+    const total = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const tax = total * 0.1; // 10% tax example
     const finalTotal = total + tax;
     
@@ -224,7 +295,7 @@ const Components = {
         <img src="${item.image}" alt="${item.name}">
         <div class="order-item-mini-info">
           <h4>${item.name}</h4>
-          <p>SIZE: ${item.size} — $${item.price.toFixed(2)}</p>
+          <p>SIZE: ${item.size} — QTY: ${item.quantity} — $${(item.price * item.quantity).toFixed(2)}</p>
         </div>
       </div>
     `).join('');
@@ -334,6 +405,46 @@ const Components = {
         </div>
       </section>
     `;
+  },
+
+  AdminStock: async () => {
+    if (!state.user || state.user.role !== 'admin') {
+      router.navigate('/login');
+      return '';
+    }
+    const { data } = await api('/products');
+    const products = data.products || [];
+
+    const rows = products.map(p => `
+      <div class="admin-product-row" style="padding: 2rem; border-bottom: 1px solid var(--color-border); display: grid; grid-template-columns: 100px 1fr 2fr; gap: 2rem; align-items: center;">
+        <img src="${p.images.hero}" style="width: 80px; height: 100px; object-fit: cover;">
+        <div>
+          <h4 style="font-weight: 700; text-transform: uppercase;">${p.name}</h4>
+          <p style="font-size: 0.7rem; color: var(--color-text-dim);">${p.category}</p>
+        </div>
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+          ${p.inventory.map(i => `
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; background: var(--color-secondary); padding: 1rem; border-radius: 4px; min-width: 100px;">
+              <span style="font-weight: 900; font-size: 0.7rem;">SIZE ${i.size}</span>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <button class="btn-icon" onclick="admin.adjustStock('${p._id}', '${i.size}', -1)" style="width: 30px; height: 30px; border: 1px solid var(--color-border); border-radius: 50%; font-weight: 700;">-</button>
+                <span id="stock-${p._id}-${i.size}" style="font-weight: 700; font-size: 1.2rem; min-width: 30px; text-align: center;">${i.stock}</span>
+                <button class="btn-icon" onclick="admin.adjustStock('${p._id}', '${i.size}', 1)" style="width: 30px; height: 30px; border: 1px solid var(--color-border); border-radius: 50%; font-weight: 700;">+</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+
+    return `
+      <section class="container" style="padding-top: 10rem;">
+        <h1 style="font-size: 8vw; font-weight: 900; letter-spacing: -4px;">STOCK ROOM</h1>
+        <div style="margin-top: 4rem; border: 1px solid var(--color-border); border-radius: 8px; overflow: hidden;">
+          ${rows}
+        </div>
+      </section>
+    `;
   }
 };
 
@@ -360,13 +471,33 @@ const cart = {
   add: () => {
     if (!cart.selectedSize) return alert('Please select a size');
     const p = state.currentProduct;
-    state.cart.push({
-      id: p._id,
-      name: p.name,
-      price: p.price,
-      image: p.images.hero,
-      size: cart.selectedSize
-    });
+    
+    // Find stock level for selected size
+    const inventoryItem = p.inventory.find(i => i.size === cart.selectedSize);
+    if (!inventoryItem || inventoryItem.stock <= 0) {
+      return alert('Sorry, this size is out of stock.');
+    }
+
+    // Check if item already exists in cart with same size
+    const existingIndex = state.cart.findIndex(item => item.productId === p._id && item.size === cart.selectedSize);
+    
+    if (existingIndex > -1) {
+      // Check total combined quantity vs stock
+      if (state.cart[existingIndex].quantity >= inventoryItem.stock) {
+        return alert(`Sorry, only ${inventoryItem.stock} items available in stock.`);
+      }
+      state.cart[existingIndex].quantity += 1;
+    } else {
+      state.cart.push({
+        productId: p._id,
+        name: p.name,
+        price: p.price,
+        image: p.images.hero,
+        size: cart.selectedSize,
+        quantity: 1
+      });
+    }
+
     saveState();
     updateNavUI();
     cart.toggle(true);
@@ -389,7 +520,7 @@ const cart = {
       ? state.cart.map((item, i) => Components.CartItem(item, i)).join('')
       : '<p class="text-center mt-4">YOUR CART IS EMPTY</p>';
       
-    const total = state.cart.reduce((sum, item) => sum + item.price, 0);
+    const total = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     totalEl.textContent = `$${total.toFixed(2)}`;
   },
 
@@ -416,14 +547,15 @@ const cart = {
 
     // Format items for backend
     const items = state.cart.map(item => ({
-      product: item.id,
+      product: item.productId,
       name: item.name,
       image: item.image,
       price: item.price,
-      size: item.size
+      size: item.size,
+      quantity: item.quantity || 1
     }));
 
-    const total = state.cart.reduce((sum, item) => sum + item.price, 0) * 1.1; // Total + Tax
+    const total = state.cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0) * 1.1; // Total + Tax
 
     const payload = {
       email,
@@ -448,6 +580,30 @@ const cart = {
       alertSystem.show('ORDER PLACED SUCCESSFULLY');
     } else {
       alert(data.message || 'Failed to place order');
+    }
+  }
+};
+
+const admin = {
+  adjustStock: async (productId, size, change) => {
+    const el = document.getElementById(`stock-${productId}-${size}`);
+    const currentStock = parseInt(el.innerText);
+    const newStock = Math.max(0, currentStock + change);
+    
+    // Optimistic UI update
+    el.innerText = newStock;
+    
+    const { res, data } = await api(`/products/${productId}/stock`, {
+      method: 'PATCH',
+      body: JSON.stringify({ size, stock: newStock })
+    });
+
+    if (res.ok) {
+      alertSystem.show('STOCK UPDATED');
+    } else {
+      // Revert UI on failure
+      el.innerText = currentStock;
+      alert(data.message || 'Failed to update stock');
     }
   }
 };
@@ -490,6 +646,7 @@ const router = {
     }
     else if (path === '/checkout-success') app.innerHTML = Components.CheckoutSuccess();
     else if (path === '/account') app.innerHTML = Components.Account();
+    else if (path === '/admin') app.innerHTML = await Components.AdminStock();
     else if (path === '/cart') { 
       // Handle cart opening without infinite loop
       app.innerHTML = Components.Hero(); // Default background
@@ -516,9 +673,26 @@ function updateNavUI() {
   if (state.user) {
     if (loginLink) loginLink.style.display = 'none';
     if (accountLink) accountLink.style.display = 'block';
+    
+    // Check for admin link
+    let adminLink = document.getElementById('admin-link');
+    if (state.user.role === 'admin') {
+      if (!adminLink) {
+        const navLinks = document.querySelector('.nav-links');
+        const li = document.createElement('li');
+        li.innerHTML = '<a href="/admin" data-nav id="admin-link">ADMIN</a>';
+        navLinks.insertBefore(li, document.getElementById('nav-auth-links'));
+        attachListeners(); // Re-attach for new link
+      }
+    } else if (adminLink) {
+      adminLink.parentElement.remove();
+    }
   } else {
     if (loginLink) loginLink.style.display = 'block';
     if (accountLink) accountLink.style.display = 'none';
+    
+    const adminLink = document.getElementById('admin-link');
+    if (adminLink) adminLink.parentElement.remove();
   }
   
   if (cartCount) cartCount.textContent = state.cart.length;
@@ -589,6 +763,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Export globally
 window.router = router;
 window.cart = cart;
+window.admin = admin;
 window.productGallery = productGallery;
 window.logout = logout;
 window.state = state; // Export state for easier debugging

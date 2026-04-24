@@ -400,6 +400,32 @@ body {
   border-color: var(--color-primary);
 }
 
+.size-chip.out-of-stock {
+  opacity: 0.3;
+  cursor: not-allowed;
+  position: relative;
+  overflow: hidden;
+}
+
+.size-chip.out-of-stock::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--color-text);
+  transform: rotate(-45deg);
+}
+
+.low-stock-badge {
+  font-size: 0.6rem;
+  color: #ff8800;
+  font-weight: 900;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+}
+
 /* 💎 ALERTS */
 #alert-system {
   position: fixed;

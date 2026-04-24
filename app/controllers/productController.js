@@ -33,3 +33,22 @@ exports.create = async (req, res) => {
     res.status(400).json({ success: false, message: err.message });
   }
 };
+
+exports.updateStock = async (req, res) => {
+  try {
+    const { size, stock } = req.body;
+    const product = await Product.findById(req.params.id);
+    
+    if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
+    
+    const inventoryItem = product.inventory.find(i => i.size === size);
+    if (!inventoryItem) return res.status(404).json({ success: false, message: 'Size not found' });
+    
+    inventoryItem.stock = Number(stock);
+    await product.save();
+    
+    res.status(200).json({ success: true, product });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

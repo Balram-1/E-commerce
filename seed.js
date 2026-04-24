@@ -2,6 +2,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const Product = require('./app/models/Product');
 const Order = require('./app/models/Order');
+const User = require('./app/models/User');
 
 const products = [
   {
@@ -149,7 +150,18 @@ const seed = async () => {
 
     await Product.deleteMany();
     await Order.deleteMany();
-    console.log('🧹 Purged Legacy Data (Products & Orders)');
+    await User.deleteMany();
+    console.log('🧹 Purged Legacy Data (Products, Orders, Users)');
+
+    // Insert Admin User
+    await User.create({
+      username: "admin",
+      email: "admin@relayverse.site",
+      password: "admin@relayverse.site", // Password now matches email as requested
+      role: "admin",
+      fullName: "Aether SysOp"
+    });
+    console.log('🛡️  Admin Account Primed: admin@relayverse.site');
 
     // Insert new products one by one to trigger pre-save hooks (slugs)
     for (const prod of products) {
